@@ -1,10 +1,10 @@
 /** Tools at Kunz that need training before use. Edit this list to add or remove tools. */
 export const TOOLS = [
-  { id: "laser", name: "laser cutter", detail: "40w co2" },
-  { id: "resin", name: "resin printer", detail: "fumes, gloves, curing" },
-  { id: "fdm", name: "filament printer", detail: "fdm" },
-  { id: "hotair", name: "soldering + hot air", detail: "rework station" },
-  { id: "scope", name: "oscilloscope", detail: "the new one" },
+  { id: "laser", name: "Laser cutter", detail: "40W CO2" },
+  { id: "resin", name: "Resin printer", detail: "Fumes, gloves, curing" },
+  { id: "fdm", name: "Filament printer", detail: "FDM" },
+  { id: "hotair", name: "Soldering and hot air", detail: "Rework station" },
+  { id: "scope", name: "Oscilloscope", detail: "The new one" },
 ] as const;
 
 export type ToolId = (typeof TOOLS)[number]["id"];

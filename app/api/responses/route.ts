@@ -24,9 +24,9 @@ export async function POST(req: Request) {
   } catch {}
   if (body?.website) return Response.json({ ok: true });
   const answer = clean(body?.answer);
-  if (!answer) return Response.json({ error: "we need at least a handle" }, { status: 400 });
+  if (!answer) return Response.json({ error: "Please add your name or handle." }, { status: 400 });
   const id = typeof body?.id === "string" ? body.id : undefined;
   const token = typeof body?.token === "string" ? body.token : undefined;
-  if (!id && (await countResponses()) >= 500) return Response.json({ error: "too many answers right now" }, { status: 429 });
+  if (!id && (await countResponses()) >= 500) return Response.json({ error: "Too many answers right now." }, { status: 429 });
   return Response.json(await saveResponse(answer, id, token));
 }

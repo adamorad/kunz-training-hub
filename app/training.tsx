@@ -6,15 +6,15 @@ import { board, TOOLS, type Answer, type Level, type Person, type Response, type
 const KEY = "kunz-training";
 const EMPTY: Answer = { handle: "", contact: "", willTrain: "maybe", tools: {}, other: "" };
 const LEVELS: { lv: Level | null; label: string }[] = [
-  { lv: null, label: "not for me" },
-  { lv: "learn", label: "want to learn" },
-  { lv: "use", label: "i'm trained" },
-  { lv: "train", label: "i can train" },
+  { lv: null, label: "No" },
+  { lv: "learn", label: "Learn" },
+  { lv: "use", label: "Trained" },
+  { lv: "train", label: "Can train" },
 ];
 const WILL: { v: WillTrain; label: string }[] = [
-  { v: "yes", label: "yes" },
-  { v: "maybe", label: "maybe" },
-  { v: "no", label: "no, just using" },
+  { v: "yes", label: "Yes" },
+  { v: "maybe", label: "Maybe" },
+  { v: "no", label: "No" },
 ];
 
 type Creds = { id: string; token: string };
@@ -76,7 +76,7 @@ export default function Training() {
     }).catch(() => null);
     const data = res && (await res.json().catch(() => null));
     if (!res?.ok || !data?.id) {
-      setErr(data?.error ?? "couldn't save, try again");
+      setErr(data?.error ?? "Couldn't save. Try again.");
       setState("error");
       return;
     }
@@ -95,36 +95,43 @@ export default function Training() {
   return (
     <>
       <h2>
-        <b>§01</b> your answer {creds && <span>· editing yours</span>}
+        <span>About you</span>
+        {creds && <span>Editing your answer</span>}
       </h2>
-      <form className="card" onSubmit={submit}>
-        <label className="field">
-          <span>handle *</span>
-          <input type="text" required maxLength={40} value={a.handle} onChange={(e) => setA({ ...a, handle: e.target.value })} />
-        </label>
-        <label className="field">
-          <span>how to reach you (telegram @, optional, shown on the board)</span>
-          <input type="text" maxLength={60} value={a.contact} onChange={(e) => setA({ ...a, contact: e.target.value })} />
-        </label>
+      <form onSubmit={submit}>
+        <div className="group">
+          <label className="cell" style={{ display: "block" }}>
+            <div className="label">Name or handle</div>
+            <input className="input" required maxLength={40} placeholder="Required" value={a.handle} onChange={(e) => setA({ ...a, handle: e.target.value })} />
+          </label>
+          <label className="cell" style={{ display: "block" }}>
+            <div className="label">Telegram</div>
+            <input className="input" maxLength={60} placeholder="@handle, optional" value={a.contact} onChange={(e) => setA({ ...a, contact: e.target.value })} />
+          </label>
+        </div>
+        <p className="foot">Your name and Telegram are shown on the board so people can find you.</p>
         <input className="hp" tabIndex={-1} autoComplete="off" aria-hidden value={hp} onChange={(e) => setHp(e.target.value)} name="website" />
 
-        <div className="field">
-          <span className="dim" style={{ fontSize: 13 }}>would you train other members?</span>
-          <div className="seg" role="group" style={{ marginTop: 6 }}>
-            {WILL.map((w) => (
-              <button type="button" key={w.v} aria-pressed={a.willTrain === w.v} onClick={() => setWill(w.v)}>
-                {w.label}
-              </button>
-            ))}
+        <h2>Would you train other members?</h2>
+        <div className="group">
+          <div className="cell">
+            <div className="seg" role="group" aria-label="Would you train other members?">
+              {WILL.map((w) => (
+                <button type="button" key={w.v} aria-pressed={a.willTrain === w.v} onClick={() => setWill(w.v)}>
+                  {w.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div style={{ marginTop: 18 }}>
-          <span className="dim" style={{ fontSize: 13 }}>tools that need training</span>
+        <h2>Tools that need training</h2>
+        <div className="group">
           {TOOLS.map((t) => (
-            <div className="tool" key={t.id}>
-              <div className="name">
-                {t.name} <span className="dim">· {t.detail}</span>
+            <div className="cell" key={t.id}>
+              <div className="tool-head">
+                <span className="tool-name">{t.name}</span>
+                <span className="tool-detail">{t.detail}</span>
               </div>
               <div className="seg" role="group" aria-label={t.name}>
                 {LEVELS.map(({ lv, label }) => (
@@ -144,52 +151,63 @@ export default function Training() {
           ))}
         </div>
 
-        <label className="field" style={{ marginTop: 14 }}>
-          <span>missing a tool that needs training? or something else you could teach</span>
-          <textarea rows={3} maxLength={300} value={a.other} onChange={(e) => setA({ ...a, other: e.target.value })} />
-        </label>
+        <h2>Anything else</h2>
+        <div className="group">
+          <label className="cell" style={{ display: "block" }}>
+            <textarea className="input" rows={3} maxLength={300} placeholder="A tool we missed, or something else you could teach" value={a.other} onChange={(e) => setA({ ...a, other: e.target.value })} />
+          </label>
+        </div>
 
         <button className="submit" disabled={state === "saving"}>
-          {state === "saving" ? "saving..." : creds ? "update my answer" : "send"}
+          {state === "saving" ? "Saving..." : creds ? "Update my answer" : "Send"}
         </button>
-        {state === "saved" && <p className="note">saved. you can come back and edit from this device.</p>}
-        {state === "error" && <p className="note" style={{ color: "var(--gap)" }}>{err}</p>}
+        {state === "saved" && <p className="note">Saved. You can edit it later from this device.</p>}
+        {state === "error" && <p className="note err">{err}</p>}
       </form>
 
-      <h2>
-        <b>§02</b> the board {all && <span>· {all.length} answers</span>}
-      </h2>
-      {!all ? (
-        <p className="dim">loading...</p>
-      ) : (
+      <h2 className="big">The board</h2>
+      <p className="sub">{all ? `${all.length} ${all.length === 1 ? "answer" : "answers"} so far` : "Loading..."}</p>
+      {all && (
         <div className="board">
           {rows.map((r) => (
-            <div className="card row" key={r.tool.id}>
-              <h3>
-                {r.tool.name}
-                {r.gap && <span className="flag">needs a trainer</span>}
-              </h3>
-              <Line label="can train" people={r.train} kind="train" />
-              <Line label="trained" people={r.use} />
-              <Line label="wants to learn" people={r.learn} kind="learn" />
+            <div className="group" key={r.tool.id}>
+              <div className="cell">
+                <div className="card-title">
+                  <h3>{r.tool.name}</h3>
+                  {r.gap ? <span className="badge gap">Needs a trainer</span> : r.train.length > 0 && <span className="badge ok">Has a trainer</span>}
+                </div>
+                <div className="stats">
+                  <div className="stat train"><b>{r.train.length}</b><span>Can train</span></div>
+                  <div className="stat use"><b>{r.use.length}</b><span>Trained</span></div>
+                  <div className="stat learn"><b>{r.learn.length}</b><span>Want to learn</span></div>
+                </div>
+              </div>
+              {r.train.length + r.use.length + r.learn.length > 0 && (
+                <div className="cell people">
+                  {r.train.map((p, i) => <PersonRow key={`t${i}`} p={p} role="train" />)}
+                  {r.use.map((p, i) => <PersonRow key={`u${i}`} p={p} role="use" />)}
+                  {r.learn.map((p, i) => <PersonRow key={`l${i}`} p={p} role="learn" />)}
+                </div>
+              )}
             </div>
           ))}
           {trainers.length > 0 && (
-            <div className="card row">
-              <h3>willing to train</h3>
-              <Line label="yes / maybe" people={trainers} kind="train" />
+            <div className="group">
+              <div className="cell"><div className="card-title"><h3>Willing to train</h3></div></div>
+              <div className="cell people">
+                {trainers.map((p) => <PersonRow key={p.id} p={p} label={p.willTrain === "yes" ? "Yes" : "Maybe"} role="train" />)}
+              </div>
             </div>
           )}
           {all.some((r) => r.other) && (
-            <div className="card row">
-              <h3>also mentioned</h3>
-              {all
-                .filter((r) => r.other)
-                .map((r) => (
-                  <p key={r.id} style={{ fontSize: 13 }}>
-                    <span className="dim">{r.handle}:</span> {r.other}
-                  </p>
-                ))}
+            <div className="group">
+              <div className="cell"><div className="card-title"><h3>Also mentioned</h3></div></div>
+              {all.filter((r) => r.other).map((r) => (
+                <div className="cell" key={r.id}>
+                  <div className="label">{r.handle}</div>
+                  {r.other}
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -198,22 +216,19 @@ export default function Training() {
   );
 }
 
-function Line({ label, people, kind }: { label: string; people: Person[]; kind?: "train" | "learn" }) {
+const ROLE = { train: "Can train", use: "Trained", learn: "Wants to learn" } as const;
+const HUES = ["#ff9500", "#ff2d55", "#5856d6", "#34c759", "#007aff", "#af52de", "#5ac8fa", "#ffcc00"];
+const hue = (s: string) => HUES[[...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % HUES.length];
+
+function PersonRow({ p, role, label }: { p: Person; role: Level; label?: string }) {
   return (
-    <div className="line">
-      <span>{label}</span>
-      {people.length ? (
-        <span className="chips">
-          {people.map((p, i) => (
-            <span className={`chip ${kind ?? ""}`} key={i} title={p.contact || undefined}>
-              {p.handle}
-              {p.contact && <span className="dim"> {p.contact}</span>}
-            </span>
-          ))}
-        </span>
-      ) : (
-        <span className="dim">nobody yet</span>
-      )}
+    <div className="person">
+      <span className="avatar" style={{ background: hue(p.handle) }}>{p.handle.slice(0, 1).toUpperCase()}</span>
+      <span className="who">
+        <div>{p.handle}</div>
+        {p.contact && <div className="contact">{p.contact}</div>}
+      </span>
+      <span className={`role ${role}`}>{label ?? ROLE[role]}</span>
     </div>
   );
 }

@@ -3,11 +3,12 @@ import Training from "./training";
 export default function Page() {
   return (
     <main>
-      <h1>who trains what</h1>
-      <p className="dim">some tools at kunz need training before you use them. tell us what you know, what you want to learn, and whether you&apos;d teach. takes a minute.</p>
+      <div className="eyebrow">Kunz Hackerspace</div>
+      <h1>Who trains what.</h1>
+      <p className="lede">Some tools need training first. Tell us what you know, what you want to learn, and whether you&apos;d teach.</p>
       <Training />
       <footer>
-        open source, MIT. data export: <a href="/api/responses?export=1">json</a>. tool list lives in lib/training.ts.
+        Open source, MIT. <a href="/api/responses?export=1">Download all answers</a>
       </footer>
     </main>
   );
