@@ -1,4 +1,4 @@
-# kunz · who trains what
+# Kunz Training Hub
 
 A small form for Kunz hackerspace: which tools need training, who can train them, and who wants to learn. Answers show up on a public board.
 
