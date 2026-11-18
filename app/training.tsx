@@ -101,15 +101,15 @@ export default function Training() {
       <form onSubmit={submit}>
         <div className="group">
           <label className="cell" style={{ display: "block" }}>
-            <div className="label">Name or handle</div>
-            <input className="input" required maxLength={40} placeholder="Required" value={a.handle} onChange={(e) => setA({ ...a, handle: e.target.value })} />
+            <div className="label">Handle</div>
+            <input className="input" required maxLength={40} placeholder="Required, no real names needed" value={a.handle} onChange={(e) => setA({ ...a, handle: e.target.value })} />
           </label>
           <label className="cell" style={{ display: "block" }}>
             <div className="label">Telegram</div>
             <input className="input" maxLength={60} placeholder="@handle, optional" value={a.contact} onChange={(e) => setA({ ...a, contact: e.target.value })} />
           </label>
         </div>
-        <p className="foot">Your name and Telegram are shown on the board so people can find you.</p>
+        <p className="foot">Your handle and Telegram are shown on the board so people can find you.</p>
         <input className="hp" tabIndex={-1} autoComplete="off" aria-hidden value={hp} onChange={(e) => setHp(e.target.value)} name="website" />
 
         <h2>Would you train other members?</h2>
