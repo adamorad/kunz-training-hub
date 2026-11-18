@@ -1,13 +1,18 @@
-import { clean } from "@/lib/training";
+import { clean, publicView } from "@/lib/training";
+import { isKeyholder, member, spaceCodeOk } from "@/lib/auth";
 import { countResponses, getResponse, listResponses, saveResponse } from "@/lib/store";
 
-/** Everyone's answers (no tokens). ?export=1 downloads them as JSON. With ?id=&token= returns your own. */
+/**
+ * Everyone's answers, without edit keys. Contacts only for members (x-id, x-token) and key-holders.
+ * ?me=1 returns the caller's own answer. ?export=1 downloads as JSON.
+ */
 export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
-  const [id, token] = [q.get("id"), q.get("token")];
-  if (id && token) return Response.json(await getResponse(id, token), { headers: { "cache-control": "no-store" } });
+  const me = await member(req);
+  if (q.get("me")) return Response.json(me, { headers: { "cache-control": "no-store" } });
   const all = await listResponses();
-  return Response.json(all, {
+  const full = !!me || isKeyholder(req);
+  return Response.json(full ? all : all.map(publicView), {
     headers: {
       "cache-control": "no-store",
       ...(q.get("export") && { "content-disposition": `attachment; filename="kunz-training-${new Date().toISOString().slice(0, 10)}.json"` }),
@@ -15,6 +20,7 @@ export async function GET(req: Request) {
   });
 }
 
+/** { answer, id?, token?, code? }: update your answer with id+token, or join with the space code. */
 export async function POST(req: Request) {
   const text = await req.text();
   if (text.length > 5000) return Response.json({ error: "too large" }, { status: 413 });
@@ -24,9 +30,11 @@ export async function POST(req: Request) {
   } catch {}
   if (body?.website) return Response.json({ ok: true });
   const answer = clean(body?.answer);
-  if (!answer) return Response.json({ error: "Please add a handle." }, { status: 400 });
+  if (!answer) return Response.json({ error: "handle" }, { status: 400 });
   const id = typeof body?.id === "string" ? body.id : undefined;
   const token = typeof body?.token === "string" ? body.token : undefined;
-  if (!id && (await countResponses()) >= 500) return Response.json({ error: "Too many answers right now." }, { status: 429 });
-  return Response.json(await saveResponse(answer, id, token));
+  if (id && token && (await getResponse(id, token))) return Response.json(await saveResponse(answer, id, token));
+  if (!spaceCodeOk(body?.code)) return Response.json({ error: "code" }, { status: 403 });
+  if ((await countResponses()) >= 500) return Response.json({ error: "busy" }, { status: 429 });
+  return Response.json(await saveResponse(answer));
 }

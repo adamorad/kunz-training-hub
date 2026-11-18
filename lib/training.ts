@@ -1,11 +1,11 @@
 /** Tools at Kunz that need training before use. Edit this list to add or remove tools. */
 export const TOOLS = [
-  { id: "laser", name: "Laser cutter", detail: "40W CO2" },
-  { id: "resin", name: "Resin printer", detail: "Fumes, gloves, curing" },
-  { id: "fdm", name: "Filament printer", detail: "FDM" },
-  { id: "solder", name: "Soldering", detail: "Iron, fumes, burns" },
-  { id: "hotair", name: "Hot air", detail: "Rework station" },
-  { id: "scope", name: "Oscilloscope", detail: "The new one" },
+  { id: "laser", name: "Laser cutter", detail: "40W CO2", he: "חותך לייזר", detailHe: "CO2 40W" },
+  { id: "resin", name: "Resin printer", detail: "Fumes, gloves, curing", he: "מדפסת שרף", detailHe: "אדים, כפפות, ייבוש" },
+  { id: "fdm", name: "Filament printer", detail: "FDM", he: "מדפסת פילמנט", detailHe: "FDM" },
+  { id: "solder", name: "Soldering", detail: "Iron, fumes, burns", he: "הלחמה", detailHe: "מלחם, אדים, כוויות" },
+  { id: "hotair", name: "Hot air", detail: "Rework station", he: "אוויר חם", detailHe: "תחנת ריוורק" },
+  { id: "scope", name: "Oscilloscope", detail: "The new one", he: "אוסצילוסקופ", detailHe: "החדש" },
 ] as const;
 
 export type ToolId = (typeof TOOLS)[number]["id"];
@@ -20,7 +20,11 @@ export type Answer = {
   tools: Partial<Record<ToolId, Level>>;
   other: string;
 };
-export type Response = Answer & { id: string; updatedAt: string };
+/** verified: tools a key-holder confirmed this person can train. */
+export type Response = Answer & { id: string; updatedAt: string; verified?: ToolId[] };
+
+/** What people without member access see: no contact details. */
+export const publicView = (r: Response): Response => ({ ...r, contact: "" });
 
 const LEVELS: Level[] = ["learn", "use", "train"];
 const WILL: WillTrain[] = ["yes", "maybe", "no"];
@@ -58,13 +62,13 @@ export function board(responses: Response[]): Row[] {
 }
 
 type Tool = (typeof TOOLS)[number];
-export type Trainer = Person & { willTrain: WillTrain; tools: Tool[] };
+export type Trainer = Person & { willTrain: WillTrain; tools: Tool[]; verified: ToolId[] };
 
 /** Who can train what (most tools first), and who is willing but hasn't picked a tool. */
 export function trainers(responses: Response[]) {
   const all = responses
     .filter((r) => r.willTrain !== "no")
-    .map((r) => ({ handle: r.handle, contact: r.contact, willTrain: r.willTrain, tools: TOOLS.filter((t) => r.tools[t.id] === "train") as Tool[] }));
+    .map((r) => ({ handle: r.handle, contact: r.contact, willTrain: r.willTrain, tools: TOOLS.filter((t) => r.tools[t.id] === "train") as Tool[], verified: r.verified ?? [] }));
   return {
     can: all.filter((t) => t.tools.length).sort((a, b) => b.tools.length - a.tools.length),
     willing: all.filter((t) => !t.tools.length),

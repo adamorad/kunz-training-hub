@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { board, clean, trainers, TOOLS } from "./training";
+import { board, clean, publicView, trainers, TOOLS } from "./training";
 
 describe("clean", () => {
   it("keeps a valid answer and trims text", () => {
@@ -26,6 +26,14 @@ describe("clean", () => {
   it("does not count 'train' on a tool when the person won't train", () => {
     const r = clean({ handle: "x", willTrain: "no", tools: { laser: "train" } });
     expect(r?.tools).toEqual({ laser: "use" });
+  });
+});
+
+describe("publicView", () => {
+  it("hides contacts and keeps verification", () => {
+    const r = { id: "1", handle: "noa", contact: "@noa", willTrain: "yes" as const, tools: { laser: "train" as const }, other: "", updatedAt: "", verified: ["laser" as const] };
+    expect(publicView(r).contact).toBe("");
+    expect(publicView(r).verified).toEqual(["laser"]);
   });
 });
 
@@ -65,6 +73,11 @@ describe("trainers", () => {
       ["noa", ["laser", "solder"]],
       ["eitan", ["fdm"]],
     ]);
+  });
+
+  it("marks which tools are verified", () => {
+    const t = trainers([{ ...rs[0], verified: ["laser" as const] }]);
+    expect(t.can[0].verified).toEqual(["laser"]);
   });
 
   it("lists people willing to train who haven't picked a tool yet", () => {
