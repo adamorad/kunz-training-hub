@@ -3,7 +3,8 @@ export const TOOLS = [
   { id: "laser", name: "Laser cutter", detail: "40W CO2" },
   { id: "resin", name: "Resin printer", detail: "Fumes, gloves, curing" },
   { id: "fdm", name: "Filament printer", detail: "FDM" },
-  { id: "hotair", name: "Soldering and hot air", detail: "Rework station" },
+  { id: "solder", name: "Soldering", detail: "Iron, fumes, burns" },
+  { id: "hotair", name: "Hot air", detail: "Rework station" },
   { id: "scope", name: "Oscilloscope", detail: "The new one" },
 ] as const;
 
@@ -54,4 +55,18 @@ export function board(responses: Response[]): Row[] {
     const learn = pick("learn");
     return { tool, train, use: pick("use"), learn, gap: learn.length > 0 && train.length === 0 };
   });
+}
+
+type Tool = (typeof TOOLS)[number];
+export type Trainer = Person & { willTrain: WillTrain; tools: Tool[] };
+
+/** Who can train what (most tools first), and who is willing but hasn't picked a tool. */
+export function trainers(responses: Response[]) {
+  const all = responses
+    .filter((r) => r.willTrain !== "no")
+    .map((r) => ({ handle: r.handle, contact: r.contact, willTrain: r.willTrain, tools: TOOLS.filter((t) => r.tools[t.id] === "train") as Tool[] }));
+  return {
+    can: all.filter((t) => t.tools.length).sort((a, b) => b.tools.length - a.tools.length),
+    willing: all.filter((t) => !t.tools.length),
+  };
 }

@@ -126,3 +126,7 @@ button:focus-visible, .input:focus-visible { outline: 2px solid var(--accent); o
 
 footer { margin-top: 48px; text-align: center; font-size: 13px; color: var(--dim); }
 a { color: var(--accent); text-decoration: none; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.chip { font-size: 13px; font-weight: 500; color: var(--train); background: color-mix(in srgb, var(--train) 12%, transparent); border-radius: 999px; padding: 3px 10px; }
+.contact.inline { margin-left: 4px; }

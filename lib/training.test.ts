@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { board, clean, TOOLS } from "./training";
+import { board, clean, trainers, TOOLS } from "./training";
 
 describe("clean", () => {
   it("keeps a valid answer and trims text", () => {
@@ -47,5 +47,27 @@ describe("board", () => {
     const resin = board([a, b, c]).find((r) => r.tool.id === "resin")!;
     expect(resin.gap).toBe(true);
     expect(board([a, b, c]).find((r) => r.tool.id === "laser")!.gap).toBe(false);
+  });
+});
+
+describe("trainers", () => {
+  const base = { contact: "", other: "", updatedAt: "" };
+  const rs = [
+    { ...base, id: "1", handle: "noa", willTrain: "yes" as const, tools: { laser: "train" as const, solder: "train" as const, fdm: "use" as const } },
+    { ...base, id: "2", handle: "eitan", willTrain: "maybe" as const, tools: { fdm: "train" as const } },
+    { ...base, id: "3", handle: "dana", willTrain: "yes" as const, tools: { resin: "learn" as const } },
+    { ...base, id: "4", handle: "omer", willTrain: "no" as const, tools: { scope: "use" as const } },
+  ];
+
+  it("lists who can train what, most tools first, tools in TOOLS order", () => {
+    const t = trainers(rs);
+    expect(t.can.map((p) => [p.handle, p.tools.map((x) => x.id)])).toEqual([
+      ["noa", ["laser", "solder"]],
+      ["eitan", ["fdm"]],
+    ]);
+  });
+
+  it("lists people willing to train who haven't picked a tool yet", () => {
+    expect(trainers(rs).willing.map((p) => p.handle)).toEqual(["dana"]);
   });
 });

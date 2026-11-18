@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { board, TOOLS, type Answer, type Level, type Person, type Response, type WillTrain } from "@/lib/training";
+import { board, trainers, TOOLS, type Answer, type Level, type Person, type Response, type WillTrain } from "@/lib/training";
 
 const KEY = "kunz-training";
 const EMPTY: Answer = { handle: "", contact: "", willTrain: "maybe", tools: {}, other: "" };
@@ -33,6 +33,7 @@ export default function Training() {
   const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [err, setErr] = useState("");
   const [hp, setHp] = useState("");
+  const [view, setView] = useState<"trainers" | "tools">("trainers");
 
   const refresh = () =>
     fetch("/api/responses")
@@ -90,7 +91,7 @@ export default function Training() {
   }
 
   const rows = all ? board(all) : [];
-  const trainers = (all ?? []).filter((r) => r.willTrain !== "no");
+  const tr = trainers(all ?? []);
 
   return (
     <>
@@ -168,6 +169,58 @@ export default function Training() {
       <h2 className="big">The board</h2>
       <p className="sub">{all ? `${all.length} ${all.length === 1 ? "answer" : "answers"} so far` : "Loading..."}</p>
       {all && (
+        <div className="seg" role="group" aria-label="Board view" style={{ marginBottom: 16 }}>
+          <button type="button" aria-pressed={view === "trainers"} onClick={() => setView("trainers")}>Who can train what</button>
+          <button type="button" aria-pressed={view === "tools"} onClick={() => setView("tools")}>By tool</button>
+        </div>
+      )}
+      {all && view === "trainers" && (
+        <div className="board">
+          <div className="group">
+            {tr.can.length ? (
+              tr.can.map((p, i) => (
+                <div className="cell" key={i}>
+                  <div className="person">
+                  <span className="avatar" style={{ background: hue(p.handle) }}>{p.handle.slice(0, 1).toUpperCase()}</span>
+                  <span className="who">
+                    <div>{p.handle} {p.contact && <span className="contact inline">{p.contact}</span>}</div>
+                    <div className="chips">
+                      {p.tools.map((t) => <span className="chip" key={t.id}>{t.name}</span>)}
+                    </div>
+                  </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="cell empty">No trainers yet. Be the first.</div>
+            )}
+          </div>
+          {tr.willing.length > 0 && (
+            <>
+              <h2 style={{ margin: "8px 16px -8px" }}>Willing to train, no tool picked yet</h2>
+              <div className="group">
+                <div className="cell people">
+                  {tr.willing.map((p, i) => <PersonRow key={i} p={p} label={p.willTrain === "yes" ? "Yes" : "Maybe"} role="train" />)}
+                </div>
+              </div>
+            </>
+          )}
+          {rows.some((r) => r.gap) && (
+            <>
+              <h2 style={{ margin: "8px 16px -8px" }}>Needs a trainer</h2>
+              <div className="group">
+                {rows.filter((r) => r.gap).map((r) => (
+                  <div className="cell tool-head" key={r.tool.id} style={{ marginBottom: 0 }}>
+                    <span>{r.tool.name}</span>
+                    <span className="role learn">{r.learn.length} waiting</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+      {all && view === "tools" && (
         <div className="board">
           {rows.map((r) => (
             <div className="group" key={r.tool.id}>
@@ -191,14 +244,6 @@ export default function Training() {
               )}
             </div>
           ))}
-          {trainers.length > 0 && (
-            <div className="group">
-              <div className="cell"><div className="card-title"><h3>Willing to train</h3></div></div>
-              <div className="cell people">
-                {trainers.map((p) => <PersonRow key={p.id} p={p} label={p.willTrain === "yes" ? "Yes" : "Maybe"} role="train" />)}
-              </div>
-            </div>
-          )}
           {all.some((r) => r.other) && (
             <div className="group">
               <div className="cell"><div className="card-title"><h3>Also mentioned</h3></div></div>
