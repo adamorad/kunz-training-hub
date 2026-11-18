@@ -227,3 +227,27 @@ footer a { color: var(--text-2); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Hero circuit */
+.circuit { margin: 4px -8px 8px; }
+.ct-line { fill: none; stroke: var(--line-strong); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 900ms var(--ease) forwards; animation-delay: calc(var(--i) * 90ms + 150ms); }
+.ct-ok .ct-line { stroke: color-mix(in srgb, var(--train) 55%, transparent); }
+.ct-wait .ct-line { stroke: color-mix(in srgb, var(--learn) 55%, transparent); }
+.ct-pad { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: padIn 500ms var(--spring) both; animation-delay: calc(var(--i) * 90ms + 700ms); }
+.ct-ok .ct-pad { fill: var(--train); stroke: var(--train); filter: drop-shadow(0 0 6px var(--train)); }
+.ct-wait .ct-pad { fill: var(--learn); stroke: var(--learn); animation: padIn 500ms var(--spring) both, glow 1.6s ease-in-out infinite; animation-delay: calc(var(--i) * 90ms + 700ms), 1.4s; }
+.ct-hole { fill: var(--bg); }
+.ct-pulse { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+.ct-label { font-size: 11px; font-weight: 500; fill: var(--text-3); }
+.ct-ok .ct-label { fill: var(--text-2); }
+.ct-chip { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1; filter: drop-shadow(0 8px 24px rgba(0,0,0,.35)); }
+.ct-legend { display: flex; justify-content: center; gap: 16px; font-size: 12px; color: var(--text-3); }
+.ct-legend span { display: inline-flex; align-items: center; gap: 6px; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes padIn { from { transform: scale(0); } }
+@keyframes glow { 50% { filter: drop-shadow(0 0 8px var(--learn)); } }
+
+/* Hero explainer */
+.steps { display: grid; gap: 10px; margin: 20px 0 4px; padding: 0; list-style: none; counter-reset: s; }
+.steps li { display: flex; gap: 12px; align-items: flex-start; color: var(--text-2); font-size: 15px; line-height: 22px; counter-increment: s; }
+.steps li::before { content: counter(s); flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); color: var(--text); font-size: 12px; font-weight: 600; display: grid; place-items: center; }

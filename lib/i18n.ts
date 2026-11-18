@@ -105,6 +105,13 @@ const en = {
   sessionsFor: "Sessions",
   newSession: "New session",
   waitingOn: (n: number) => `${n} want to learn this`,
+  heroTitle: "Learn the tools. Teach the tools.",
+  heroSub: "Kunz has a laser, printers and a solder bench, and some of them bite. Here members find who can show them how, and trainers find who is waiting.",
+  step1: "Scan the code at the space and say what you know.",
+  step2: "Join a session with a member who can train you.",
+  step3: "Use the tool. Then teach the next person.",
+  legendOk: "Has a trainer",
+  legendWait: "People waiting",
 };
 
 const he: typeof en = {
@@ -210,6 +217,13 @@ const he: typeof en = {
   sessionsFor: "הדרכות",
   newSession: "הדרכה חדשה",
   waitingOn: (n: number) => `${n} רוצים ללמוד את זה`,
+  heroTitle: "ללמוד את הכלים. ללמד את הכלים.",
+  heroSub: "בקונץ יש לייזר, מדפסות ועמדת הלחמה, וחלק מהם נושכים. כאן חברים מוצאים מי יראה להם איך, ומדריכים רואים מי מחכה.",
+  step1: "סורקים את הקוד במרחב ומספרים מה יודעים.",
+  step2: "נרשמים להדרכה עם חבר שיכול להדריך.",
+  step3: "משתמשים בכלי. ואז מלמדים את הבא בתור.",
+  legendOk: "יש מדריך",
+  legendWait: "יש מחכים",
 };
 
 export const DICT = { en, he };

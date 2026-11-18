@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { board, trainers, TOOLS, type Answer, type Level, type Response, type WillTrain } from "@/lib/training";
 import { api, toolDetail, toolName, usePrefs } from "./prefs";
+import Circuit from "./circuit";
 import { NewSessionButton, SessionCard, useSessions } from "./sessions-ui";
 import { Avatar, IconSessions, IconTools, IconTrainers, IconYou, Seg } from "./ui";
 
@@ -47,7 +48,7 @@ export default function Hub() {
   return (
     <>
       <main key={tab}>
-        {tab === "you" && <You onSaved={() => { answers.refresh(); setTab("sessions"); }} />}
+        {tab === "you" && <You all={answers.all} onSaved={() => { answers.refresh(); setTab("sessions"); }} />}
         {tab === "sessions" && <Sessions {...sessions} />}
         {tab === "trainers" && <Trainers all={answers.all} />}
         {tab === "tools" && <Tools all={answers.all} sessions={sessions.list} />}
@@ -80,7 +81,7 @@ export default function Hub() {
 
 const EMPTY: Answer = { handle: "", contact: "", willTrain: "maybe", tools: {}, other: "" };
 
-function You({ onSaved }: { onSaved: () => void }) {
+function You({ all, onSaved }: { all: Response[] | null; onSaved: () => void }) {
   const { t, lang, creds, setCreds, me, refreshMe, code, setCode, toast } = usePrefs();
   const [a, setA] = useState<Answer>(EMPTY);
   const [busy, setBusy] = useState(false);
@@ -119,8 +120,14 @@ function You({ onSaved }: { onSaved: () => void }) {
 
   return (
     <div className="enter">
-      <h1>{t.title}</h1>
-      <p className="lede">{t.lede}</p>
+      <Circuit rows={all ? board(all) : null} />
+      <h1>{t.heroTitle}</h1>
+      <p className="lede">{t.heroSub}</p>
+      <ol className="steps">
+        <li>{t.step1}</li>
+        <li>{t.step2}</li>
+        <li>{t.step3}</li>
+      </ol>
       <form onSubmit={submit}>
         {!me && (
           <>
