@@ -86,17 +86,8 @@ export function Header() {
   );
 }
 
-/** A "K" drawn as circuit traces with solder pads. */
-export const Mark = () => (
-  <svg className="mark" viewBox="0 0 32 32" aria-hidden>
-    <rect x="0.5" y="0.5" width="31" height="31" rx="9" fill="#0f1215" stroke="var(--line-strong)" />
-    <path d="M11 8v16M11 16l9-8M14.5 13l6 11" fill="none" stroke="#eef1f4" strokeWidth="2.6" strokeLinecap="round" />
-    <circle cx="11" cy="8" r="2.6" fill="var(--accent)" />
-    <circle cx="20" cy="8" r="2.6" fill="var(--accent)" />
-    <circle cx="11" cy="24" r="2.6" fill="var(--accent)" />
-    <circle cx="20.5" cy="24" r="2.6" fill="var(--accent)" />
-  </svg>
-);
+/** Kunz's hamster (the Telegram channel's emoji), generated with Higgsfield. */
+export const Mark = () => <img className="mark" src="/logo.png" alt="" width={32} height={32} />;
 
 const svg = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, viewBox: "0 0 24 24" };
 export const Sun = () => (

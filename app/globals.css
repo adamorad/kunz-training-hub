@@ -80,7 +80,7 @@ button { font: inherit; color: inherit; }
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; flex: 1; min-width: 0; }
 .brand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mark { width: 30px; height: 30px; flex: none; transition: transform 400ms var(--spring); }
+.mark { width: 32px; height: 32px; flex: none; border-radius: 9px; box-shadow: 0 0 0 1px var(--line-strong); transition: transform 400ms var(--spring); }
 .brand:hover .mark { transform: rotate(-8deg) scale(1.05); }
 .icon-btn {
   height: 36px; min-width: 36px; padding: 0 10px; border-radius: 999px; border: 0; background: transparent;
