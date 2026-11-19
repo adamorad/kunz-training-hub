@@ -58,7 +58,7 @@ export default function Hub() {
         {tab === "trainers" && <Trainers all={answers.all} />}
         {tab === "tools" && <Tools all={answers.all} sessions={sessions.list} />}
         <footer>
-          {t.footer} <a href="https://github.com/adamorad/kunz-training-hub">{t.source}</a>
+          {t.footer} <a href="https://github.com/adamorad/kunz-training-hub">{t.source}</a> · <a href="/ideas">{t.ideasCta}</a>
           {creds && (
             <>
               {" · "}
@@ -335,6 +335,13 @@ function Tools({ all, sessions }: { all: Response[] | null; sessions: ReturnType
       <h1>{t.tabTools}</h1>
       <p className="lede">{t.toolsQ}</p>
       <div className="stack">
+        <Link href="/ideas" className="card row cta">
+          <span className="who">
+            <span className="h3" style={{ display: "block" }}>{t.ideasCta}</span>
+            <span className="meta">{t.ideasCtaSub}</span>
+          </span>
+          <Chevron />
+        </Link>
         {rows.map((r) => {
           const next = sessions?.find((s) => s.toolId === r.tool.id);
           return (

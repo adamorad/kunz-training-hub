@@ -123,3 +123,13 @@ export async function rollbackGuide(toolId: string) {
   const latest = blobs.map((b) => b.pathname).sort().at(-1);
   if (latest) await del(latest);
 }
+
+// Votes on what to build next: votes/<responseId>.json, one ballot per member.
+const VOTES = `${BASE}votes/`;
+export async function listBallots(): Promise<{ id: string; ideas: string[] }[]> {
+  const { blobs } = await list({ prefix: VOTES, limit: 1000 });
+  const all = await Promise.all(blobs.map((b) => readJson<{ ideas: string[] }>(b.pathname).then((v) => ({ id: b.pathname.slice(VOTES.length, -5), ideas: v?.ideas ?? [] }))));
+  return all;
+}
+export const saveBallot = (responseId: string, ideas: string[]) =>
+  ideas.length ? putJson(`${VOTES}${responseId}.json`, { ideas, at: new Date().toISOString() }) : del(`${VOTES}${responseId}.json`).catch(() => {});
