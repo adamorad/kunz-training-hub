@@ -128,6 +128,7 @@ const en = {
   voted: "Voted",
   back2: "Back",
   helpBuild: "Want to build one? The plans and code are open.",
+  cats: { all: "All", space: "Space", money: "Money", community: "Community", learning: "Learning", hardware: "Hardware" } as Record<string, string>,
 };
 
 const he: typeof en = {
@@ -256,6 +257,7 @@ const he: typeof en = {
   voted: "הצבעת",
   back2: "חזרה",
   helpBuild: "רוצים לבנות אחד? התוכניות והקוד פתוחים.",
+  cats: { all: "הכול", space: "המרחב", money: "כסף", community: "קהילה", learning: "למידה", hardware: "חומרה" },
 };
 
 export const DICT = { en, he };

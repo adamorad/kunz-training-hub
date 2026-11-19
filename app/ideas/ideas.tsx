@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { IDEAS, MAX_VOTES } from "@/lib/ideas";
+import { CATS, IDEAS, MAX_VOTES } from "@/lib/ideas";
 import { api, usePrefs } from "../prefs";
 
 type Data = { rows: { id: string; votes: number }[]; voters: number; mine: string[] | null };
@@ -13,6 +13,7 @@ export default function Ideas() {
   const [order, setOrder] = useState<string[]>([]);
   const [mine, setMine] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [cat, setCat] = useState<string>("all");
 
   useEffect(() => {
     api("/api/votes", creds)
@@ -48,7 +49,7 @@ export default function Ideas() {
     }
   }
 
-  const ideas = order.length ? order.map((id) => IDEAS.find((i) => i.id === id)!).filter(Boolean) : IDEAS;
+  const ideas = (order.length ? order.map((id) => IDEAS.find((i) => i.id === id)!).filter(Boolean) : IDEAS).filter((i) => cat === "all" || i.cat === cat);
 
   return (
     <main className="enter">
@@ -66,6 +67,15 @@ export default function Ideas() {
         </span>
         <span className="meta num">{creds ? (left > 0 ? t.votesLeft(left) : t.votesNone) : t.voteFirst}</span>
         {data && <span className="meta num" style={{ marginInlineStart: "auto", whiteSpace: "nowrap" }}>{t.voters(data.voters)}</span>}
+      </div>
+
+      <div className="chips-row" role="group" aria-label="Filter">
+        {["all", ...CATS].map((c) => (
+          <button key={c} className="chip-btn" aria-pressed={cat === c} onClick={(e) => { setCat(c); e.currentTarget.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" }); }}>
+            {t.cats[c]}
+            <span className="num">{c === "all" ? IDEAS.length : IDEAS.filter((i) => i.cat === c).length}</span>
+          </button>
+        ))}
       </div>
 
       <div className="stack">
