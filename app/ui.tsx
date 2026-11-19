@@ -90,6 +90,11 @@ export function Header() {
 export const Mark = () => <img className="mark" src="/logo.png" alt="" width={32} height={32} />;
 
 const svg = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, viewBox: "0 0 24 24" };
+export const Chevron = () => (
+  <svg {...svg} className="chev" aria-hidden>
+    <path d="M9 6l6 6-6 6" />
+  </svg>
+);
 export const Sun = () => (
   <svg {...svg}>
     <circle cx="12" cy="12" r="4" />

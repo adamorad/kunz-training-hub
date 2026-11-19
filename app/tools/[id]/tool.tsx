@@ -33,9 +33,9 @@ export default function ToolPage({ id }: { id: string }) {
       <p className="lede">{toolDetail(id, lang)}</p>
       {row && (
         <div className="stats num" style={{ marginBottom: 8 }}>
-          <div className="stat"><b>{row.train.length}</b><span><i className="dot train" />{t.canTrain}</span></div>
-          <div className="stat"><b>{row.use.length}</b><span><i className="dot use" />{t.trained}</span></div>
-          <div className="stat"><b>{row.learn.length}</b><span><i className="dot learn" />{t.wantLearn}</span></div>
+          <div className={`stat${row.train.length ? "" : " zero"}`}><b>{row.train.length}</b><span><i className="dot train" />{t.canTrain}</span></div>
+          <div className={`stat${row.use.length ? "" : " zero"}`}><b>{row.use.length}</b><span><i className="dot use" />{t.trained}</span></div>
+          <div className={`stat${row.learn.length ? "" : " zero"}`}><b>{row.learn.length}</b><span><i className="dot learn" />{t.wantLearn}</span></div>
         </div>
       )}
 

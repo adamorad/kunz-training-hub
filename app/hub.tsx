@@ -6,7 +6,7 @@ import { board, trainers, TOOLS, type Answer, type Level, type Response, type Wi
 import { api, toolDetail, toolName, usePrefs } from "./prefs";
 import Circuit from "./circuit";
 import { NewSessionButton, SessionCard, useSessions } from "./sessions-ui";
-import { Avatar, IconSessions, IconTools, IconTrainers, IconYou, Seg } from "./ui";
+import { Avatar, Chevron, IconSessions, IconTools, IconTrainers, IconYou, Seg } from "./ui";
 
 const TABS = ["you", "sessions", "trainers", "tools"] as const;
 type Tab = (typeof TABS)[number];
@@ -31,9 +31,14 @@ export default function Hub() {
   const sessions = useSessions();
 
   useEffect(() => {
-    const h = location.hash.slice(1) as Tab;
-    if (TABS.includes(h)) setTabS(h);
-    else if (localStorage.getItem("kunz-training")) setTabS("sessions");
+    const fromHash = () => {
+      const h = location.hash.slice(1) as Tab;
+      if (TABS.includes(h)) setTabS(h);
+    };
+    fromHash();
+    if (!TABS.includes(location.hash.slice(1) as Tab) && localStorage.getItem("kunz-training")) setTabS("sessions");
+    addEventListener("hashchange", fromHash);
+    return () => removeEventListener("hashchange", fromHash);
   }, []);
   const setTab = (x: Tab) => {
     setTabS(x);
@@ -266,7 +271,6 @@ function Trainers({ all }: { all: Response[] | null }) {
                     return (
                       <Link href={`/tools/${x.id}`} key={x.id} className={`tag ${ok ? "train" : "muted"}`} title={ok ? t.verified : t.unverified} style={{ textDecoration: "none" }}>
                         {toolName(x.id, lang)}
-                        {!ok && " ?"}
                       </Link>
                     );
                   })}
@@ -278,8 +282,8 @@ function Trainers({ all }: { all: Response[] | null }) {
           <div className="row empty">{t.noTrainers}</div>
         )}
       </div>
-      <p className="hint">
-        <span className="tag train">{t.verified}</span> <span className="tag muted">{t.unverified} ?</span>
+      <p className="hint legend">
+        <span className="tag train">{t.verified}</span> <span className="tag muted">{t.unverified}</span>
       </p>
 
       {tr.willing.length > 0 && (
@@ -307,7 +311,10 @@ function Trainers({ all }: { all: Response[] | null }) {
             {gaps.map((r) => (
               <Link href={`/tools/${r.tool.id}`} className="row title-row" key={r.tool.id}>
                 <span>{toolName(r.tool.id, lang)}</span>
-                <span className="tag learn num">{t.waiting(r.learn.length)}</span>
+                <span className="end">
+                  <span className="tag learn num">{t.waiting(r.learn.length)}</span>
+                  <Chevron />
+                </span>
               </Link>
             ))}
           </div>
@@ -338,9 +345,9 @@ function Tools({ all, sessions }: { all: Response[] | null; sessions: ReturnType
               </div>
               <div className="meta">{toolDetail(r.tool.id, lang)}</div>
               <div className="stats num">
-                <div className="stat"><b>{r.train.length}</b><span><i className="dot train" />{t.canTrain}</span></div>
-                <div className="stat"><b>{r.use.length}</b><span><i className="dot use" />{t.trained}</span></div>
-                <div className="stat"><b>{r.learn.length}</b><span><i className="dot learn" />{t.wantLearn}</span></div>
+                <div className={`stat${r.train.length ? "" : " zero"}`}><b>{r.train.length}</b><span><i className="dot train" />{t.canTrain}</span></div>
+                <div className={`stat${r.use.length ? "" : " zero"}`}><b>{r.use.length}</b><span><i className="dot use" />{t.trained}</span></div>
+                <div className={`stat${r.learn.length ? "" : " zero"}`}><b>{r.learn.length}</b><span><i className="dot learn" />{t.wantLearn}</span></div>
               </div>
               {next && (
                 <div className="meta" style={{ marginTop: 12 }}>
