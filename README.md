@@ -8,7 +8,7 @@ Live: https://kunz-training.vercel.app
 - No accounts: you join with the space code from the wall, and your browser keeps an edit key.
 - Key-holders verify trainers and clean up at `/admin`.
 
-How it works, the data model and the abuse rules: [docs/design.md](docs/design.md).
+How it works, the data model and the abuse rules: [docs/design.md](docs/design.md). What could come next, with plans: [docs/ideas/](docs/ideas/README.md). Pick one up!
 
 ## Run it
 

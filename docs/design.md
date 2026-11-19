@@ -42,6 +42,4 @@ There are no accounts. Submitting the form creates an answer (`responses/<id>.js
 - English and Hebrew: a header toggle (localStorage `kunz-lang`) switches strings and sets `lang`/`dir` on `<html>`. Tool names have both languages. Layout uses logical CSS properties so RTL works.
 
 ## Ideas (not now)
-- Sign-off after a session: the trainer marks who passed and they move to Trained (deferred).
-- Telegram bot: "who can train me on the laser?", new session posts, nudges when people wait on a tool.
-- Export the trained list for RFID tool access (dm-mac, https://jantman.github.io/machine-access-control).
+Detailed plans for the Training Hub's parked ideas and ten more modules for the space (open now, parts finder, tool status, wishlist, workshop tickets, dues, project wall, key-holder rota, door sensor, laser RFID): [docs/ideas/](ideas/README.md).
