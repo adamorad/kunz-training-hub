@@ -31,7 +31,8 @@ There are no accounts. Submitting the form creates an answer (`responses/<id>.js
 - All text is trimmed and length-capped on the server; the manual link must be http(s).
 
 ## Pages
-- `/`: four tabs in a bottom bar: You (the form), Sessions, Trainers, Tools.
+- Five tabs in a bottom bar on every page, each a real route: `/` You (hero and form), `/sessions`, `/trainers`, `/tools`, `/ideas` (vote on what to build next). Old `/#tools`-style links redirect.
+- A footer on every page: source code, key-holders (`/admin`), and for members the answers export.
 - `/admin`: key-holders.
 - `/tools/[id]`: the tool's guide, upcoming sessions (join, leave, or create if you are a trainer), and the people (can train, trained, want to learn).
 

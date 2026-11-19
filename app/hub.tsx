@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { board, trainers, TOOLS, type Answer, type Level, type Response, type WillTrain } from "@/lib/training";
 import { api, toolDetail, toolName, usePrefs } from "./prefs";
 import Circuit from "./circuit";
 import { NewSessionButton, SessionCard, useSessions } from "./sessions-ui";
-import { Avatar, Chevron, IconSessions, IconTools, IconTrainers, IconYou, Seg } from "./ui";
+import { Avatar, Chevron, IconSessions, Seg } from "./ui";
 
-const TABS = ["you", "sessions", "trainers", "tools"] as const;
-type Tab = (typeof TABS)[number];
+export type Tab = "you" | "sessions" | "trainers" | "tools";
 
 export function useAnswers() {
   const { creds } = usePrefs();
@@ -24,61 +24,25 @@ export function useAnswers() {
   return { all, refresh };
 }
 
-export default function Hub() {
-  const { t, creds } = usePrefs();
-  const [tab, setTabS] = useState<Tab>("you");
+/** One tab of the hub. Each tab is its own route (/, /sessions, /trainers, /tools); the tab bar is in the layout. */
+export default function Hub({ tab }: { tab: Tab }) {
+  const router = useRouter();
   const answers = useAnswers();
   const sessions = useSessions();
 
+  // Old links used /#tools etc.: send them to the real route.
   useEffect(() => {
-    const fromHash = () => {
-      const h = location.hash.slice(1) as Tab;
-      if (TABS.includes(h)) setTabS(h);
-    };
-    fromHash();
-    if (!TABS.includes(location.hash.slice(1) as Tab) && localStorage.getItem("kunz-training")) setTabS("sessions");
-    addEventListener("hashchange", fromHash);
-    return () => removeEventListener("hashchange", fromHash);
-  }, []);
-  const setTab = (x: Tab) => {
-    setTabS(x);
-    history.replaceState(null, "", `#${x}`);
-    scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const labels = { you: t.tabMe, sessions: t.tabSessions, trainers: t.tabTrainers, tools: t.tabTools };
-  const icons = { you: <IconYou />, sessions: <IconSessions />, trainers: <IconTrainers />, tools: <IconTools /> };
-  const i = TABS.indexOf(tab);
+    const h = location.hash.slice(1);
+    if (tab === "you" && ["sessions", "trainers", "tools"].includes(h)) router.replace(`/${h}`);
+  }, [tab, router]);
 
   return (
-    <>
-      <main key={tab}>
-        {tab === "you" && <You all={answers.all} onSaved={() => { answers.refresh(); setTab("sessions"); }} />}
-        {tab === "sessions" && <Sessions {...sessions} />}
-        {tab === "trainers" && <Trainers all={answers.all} />}
-        {tab === "tools" && <Tools all={answers.all} sessions={sessions.list} />}
-        <footer>
-          {t.footer} <a href="https://github.com/adamorad/kunz-training-hub">{t.source}</a> · <a href="/ideas">{t.ideasCta}</a>
-          {creds && (
-            <>
-              {" · "}
-              <a href="/api/responses?export=1">{t.download}</a>
-            </>
-          )}
-        </footer>
-      </main>
-      <nav className="tabs" aria-label="Sections">
-        <div className="tabs-inner">
-          <span className="tab-pip" style={{ insetInlineStart: `${i * 25}%` }} />
-          {TABS.map((x) => (
-            <button key={x} className="tab" aria-current={tab === x ? "page" : undefined} onClick={() => setTab(x)}>
-              {icons[x]}
-              {labels[x]}
-            </button>
-          ))}
-        </div>
-      </nav>
-    </>
+    <main>
+      {tab === "you" && <You all={answers.all} onSaved={() => { answers.refresh(); router.push("/sessions"); }} />}
+      {tab === "sessions" && <Sessions {...sessions} />}
+      {tab === "trainers" && <Trainers all={answers.all} />}
+      {tab === "tools" && <Tools all={answers.all} sessions={sessions.list} />}
+    </main>
   );
 }
 

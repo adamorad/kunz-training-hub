@@ -1,5 +1,5 @@
 import Hub from "./hub";
 
 export default function Page() {
-  return <Hub />;
+  return <Hub tab="you" />;
 }

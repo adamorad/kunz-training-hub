@@ -26,7 +26,7 @@ export default function ToolPage({ id }: { id: string }) {
 
   return (
     <main className="enter">
-      <Link href="/#tools" className="meta" style={{ textDecoration: "none" }}>
+      <Link href="/tools" className="meta" style={{ textDecoration: "none" }}>
         {lang === "he" ? "→" : "←"} {t.back}
       </Link>
       <h1>{toolName(id, lang)}</h1>

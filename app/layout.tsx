@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Prefs } from "./prefs";
+import { Footer, Tabs } from "./nav";
 import { Header } from "./ui";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], weight: ["400", "500", "600"] });
@@ -26,6 +27,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Prefs>
           <Header />
           {children}
+          <Footer />
+          <Tabs />
         </Prefs>
       </body>
     </html>

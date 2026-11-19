@@ -53,9 +53,6 @@ export default function Ideas() {
 
   return (
     <main className="enter">
-      <Link href="/#tools" className="meta" style={{ textDecoration: "none" }}>
-        {lang === "he" ? "→" : "←"} {t.back2}
-      </Link>
       <h1>{t.ideasTitle}</h1>
       <p className="lede">{t.ideasLede}</p>
 
